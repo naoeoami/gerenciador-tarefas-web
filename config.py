@@ -1,0 +1,18 @@
+import os
+
+from dotenv import load_dotenv
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, ".env"))
+
+
+class Config:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+class TestConfig(Config):
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"

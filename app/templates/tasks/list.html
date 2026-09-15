@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Minhas Tarefas{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Minhas Tarefas</h3>
+    <a href="{{ url_for('tasks.new_task') }}" class="btn btn-primary">+ Nova Tarefa</a>
+</div>
+
+<div class="btn-group mb-4" role="group">
+    <a class="btn btn-outline-secondary {{ 'active' if not current_status }}" href="{{ url_for('tasks.list_tasks') }}">Todas</a>
+    {% for value, label in status_choices %}
+    <a class="btn btn-outline-secondary {{ 'active' if current_status == value }}" href="{{ url_for('tasks.list_tasks', status=value) }}">{{ label }}</a>
+    {% endfor %}
+</div>
+
+{% set show_people = true %}
+{% include "tasks/_task_table.html" with context %}
+{% endblock %}

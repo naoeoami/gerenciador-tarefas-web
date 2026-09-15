@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-4">Dashboard do Grupo</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <div class="fs-3 fw-bold">{{ counts.total }}</div>
+                <div class="text-muted">Total</div>
+            </div>
+        </div>
+    </div>
+    {% for value, label in status_choices %}
+    <div class="col-6 col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <div class="fs-3 fw-bold">{{ counts[value] }}</div>
+                <div class="text-muted">{{ label }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="btn-group mb-4" role="group">
+    <a class="btn btn-outline-secondary {{ 'active' if not current_status }}" href="{{ url_for('main.dashboard') }}">Todas</a>
+    {% for value, label in status_choices %}
+    <a class="btn btn-outline-secondary {{ 'active' if current_status == value }}" href="{{ url_for('main.dashboard', status=value) }}">{{ label }}</a>
+    {% endfor %}
+</div>
+
+{% set show_people = true %}
+{% include "tasks/_task_table.html" with context %}
+{% endblock %}

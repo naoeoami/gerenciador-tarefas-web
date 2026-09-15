@@ -1,0 +1,56 @@
+{% if tasks %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle bg-white">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                {% if show_people %}
+                <th>Criada por</th>
+                <th>Atribuída a</th>
+                {% endif %}
+                <th>Atualizada em</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td class="text-truncate" style="max-width: 260px;">{{ task.description or "—" }}</td>
+                <td>
+                    <span class="badge status-badge status-{{ task.status }}">{{ task.status_label }}</span>
+                </td>
+                {% if show_people %}
+                <td>{{ task.author.username }}</td>
+                <td>{{ task.assignee.username if task.assignee else "—" }}</td>
+                {% endif %}
+                <td>{{ task.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2 flex-wrap">
+                        {% if task.can_update_status(current_user) %}
+                        <form method="POST" action="{{ url_for('tasks.update_status', task_id=task.id) }}" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if value == task.status %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                        {% endif %}
+                        {% if task.can_edit(current_user) %}
+                        <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" onsubmit="return confirm('Excluir esta tarefa?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">Nenhuma tarefa encontrada.</p>
+{% endif %}
